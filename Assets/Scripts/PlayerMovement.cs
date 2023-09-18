@@ -54,12 +54,12 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Enemy") && onGroundState == true)
         {
-            Debug.Log("Collided with goomba!");
+/*            Debug.Log("Collided with goomba!");*/
             Time.timeScale = 0.0f;
         }
         else if (other.gameObject.CompareTag("Enemy") && onGroundState == false)
         {
-            Debug.Log("Goomba Stomp");
+/*            Debug.Log("Goomba Stomp");*/
             GoombaDies.Raise(this, true);
         }
     }
@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void RestartButtonCallback(int input)
     {
-        Debug.Log("Restart!");
+/*        Debug.Log("Restart!");*/
         // reset everything
         ResetGame();
         // resume time
