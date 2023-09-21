@@ -17,14 +17,32 @@ public class PlayerMovement : MonoBehaviour
     public JumpOverGoomba jumpOverGoomba;
 
     public GameEvents GoombaDies;
+    public GameEvents MarioDies;
 
+    public Animator marioAnimator;
+
+    // for audio
+    public AudioSource marioAudio;
+    public AudioClip marioDeath;
+    // state
+    [System.NonSerialized]
+    public bool alive = true;
+
+    void PlayJumpSound()
+    {
+        // play jump sound
+        marioAudio.PlayOneShot(marioAudio.clip);
+    }
     // Start is called before the first frame update
+
     void Start()
     {
         // Set to be 30 FPS
         Application.targetFrameRate = 30;
         marioBody = GetComponent<Rigidbody2D>();
         marioSprite = GetComponent<SpriteRenderer>();
+
+        marioAnimator.SetBool("onGround", onGroundState);
 
     }
 
@@ -36,25 +54,43 @@ public class PlayerMovement : MonoBehaviour
         {
             faceRightState = false;
             marioSprite.flipX = true;
+            if (marioBody.velocity.x > 0.1f)
+                marioAnimator.SetTrigger("onSkid");
         }
 
         if (Input.GetKeyDown("d") && !faceRightState)
         {
             faceRightState = true;
             marioSprite.flipX = false;
+            if (marioBody.velocity.x < -0.1f)
+                marioAnimator.SetTrigger("onSkid");
         }
+        marioAnimator.SetFloat("xSpeed", Mathf.Abs(marioBody.velocity.x));
     }
 
     void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.CompareTag("Ground")) onGroundState = true;
+        Debug.Log("Touch Ground");
+
+        if (col.gameObject.CompareTag("Ground"))
+        {
+            Debug.Log("Sending animator: Mario on ground");
+            // update animator state
+            marioAnimator.SetBool("onGround", onGroundState);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.CompareTag("Enemy") && onGroundState == true)
         {
-/*            Debug.Log("Collided with goomba!");*/
+            Debug.Log("Collided with goomba!");
+            // play death animation
+            /*            marioAnimator.Play("mario-die");
+                        marioAudio.PlayOneShot(marioDeath);
+                        alive = false;*/
+            MarioDies.Raise(this, true);
             Time.timeScale = 0.0f;
         }
         else if (other.gameObject.CompareTag("Enemy") && onGroundState == false)
@@ -62,6 +98,7 @@ public class PlayerMovement : MonoBehaviour
 /*            Debug.Log("Goomba Stomp");*/
             GoombaDies.Raise(this, true);
         }
+
     }
 
     // FixedUpdate is called 50 times a second
@@ -88,6 +125,7 @@ public class PlayerMovement : MonoBehaviour
         {
             marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
             onGroundState = false;
+            marioAnimator.SetBool("onGround", onGroundState);
         }
     }
 
@@ -116,5 +154,23 @@ public class PlayerMovement : MonoBehaviour
         }
         // reset score
         jumpOverGoomba.score = 0;
+
+        // reset animation
+        marioAnimator.SetTrigger("gameRestart");
+        alive = true;
     }
+
+/*    void PlayDeathImpulse()
+    {
+        marioBody.AddForce(Vector2.up * deathImpulse, ForceMode2D.Impulse);
+    }
+
+    void GameOverScene()
+    {
+        // stop time
+        Time.timeScale = 0.0f;
+        // set gameover scene
+        gameManager.GameOver();
+    }*/
+
 }
