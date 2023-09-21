@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public GameObject enemies;
     public JumpOverGoomba jumpOverGoomba;
+    public Transform gameCamera;
 
     public GameEvents GoombaDies;
     public GameEvents MarioDies;
@@ -24,6 +25,10 @@ public class PlayerMovement : MonoBehaviour
     // for audio
     public AudioSource marioAudio;
     public AudioClip marioDeath;
+
+    [Header("Death Velocity")]
+    public Vector2 deathImpulse;
+
     // state
     [System.NonSerialized]
     public bool alive = true;
@@ -71,11 +76,11 @@ public class PlayerMovement : MonoBehaviour
     void OnCollisionEnter2D(Collision2D col)
     {
         if (col.gameObject.CompareTag("Ground")) onGroundState = true;
-        Debug.Log("Touch Ground");
+/*        Debug.Log("Touch Ground");*/
 
         if (col.gameObject.CompareTag("Ground"))
         {
-            Debug.Log("Sending animator: Mario on ground");
+/*            Debug.Log("Sending animator: Mario on ground");*/
             // update animator state
             marioAnimator.SetBool("onGround", onGroundState);
         }
@@ -87,45 +92,50 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Collided with goomba!");
             // play death animation
-            /*            marioAnimator.Play("mario-die");
-                        marioAudio.PlayOneShot(marioDeath);
-                        alive = false;*/
-            MarioDies.Raise(this, true);
-            Time.timeScale = 0.0f;
+            marioAnimator.Play("Mario-die");
+            marioAudio.PlayOneShot(marioDeath);
+            alive = false;
+/*            Time.timeScale = 0.0f;*/
         }
-        else if (other.gameObject.CompareTag("Enemy") && onGroundState == false)
+/*        else if (other.gameObject.CompareTag("Enemy") && onGroundState == false)
         {
-/*            Debug.Log("Goomba Stomp");*/
+*//*            Debug.Log("Goomba Stomp");*//*
             GoombaDies.Raise(this, true);
-        }
+        }*/
 
     }
 
     // FixedUpdate is called 50 times a second
     void FixedUpdate()
     {
-        float moveHorizontal = Input.GetAxisRaw("Horizontal");
-        if (Mathf.Abs(moveHorizontal) > 0)
-        {
-            Vector2 movement = new Vector2(moveHorizontal, 0);
-            // check if it doesn't go beyond maxSpeed
-            if (marioBody.velocity.magnitude < maxSpeed)
-                marioBody.AddForce(movement * speed);
-        }
 
-        // stop
-        if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
+        if (alive)
         {
+
+            float moveHorizontal = Input.GetAxisRaw("Horizontal");
+            // other code
+            if (Mathf.Abs(moveHorizontal) > 0)
+            {
+                Vector2 movement = new Vector2(moveHorizontal, 0);
+                // check if it doesn't go beyond maxSpeed
+                if (marioBody.velocity.magnitude < maxSpeed)
+                    marioBody.AddForce(movement * speed);
+            }
+
             // stop
-            marioBody.velocity = Vector2.zero;
-        }
+            if (Input.GetKeyUp("a") || Input.GetKeyUp("d"))
+            {
+                // stop
+                marioBody.velocity = Vector2.zero;
+            }
 
-        // jump instruction
-        if (Input.GetKeyDown("space") && onGroundState)
-        {
-            marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
-            onGroundState = false;
-            marioAnimator.SetBool("onGround", onGroundState);
+            // jump instruction
+            if (Input.GetKeyDown("space") && onGroundState)
+            {
+                marioBody.AddForce(Vector2.up * upSpeed, ForceMode2D.Impulse);
+                onGroundState = false;
+                marioAnimator.SetBool("onGround", onGroundState);
+            }
         }
     }
 
@@ -142,6 +152,10 @@ public class PlayerMovement : MonoBehaviour
     {
         // reset position
         marioBody.transform.position = new Vector3(-24.11f, -5.96f, 0.0f);
+
+        // reset camera position
+        gameCamera.position = new Vector3(-20, -2, -100);
+
         // reset sprite direction
         faceRightState = true;
         marioSprite.flipX = false;
@@ -160,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
         alive = true;
     }
 
-/*    void PlayDeathImpulse()
+    void PlayDeathImpulse()
     {
         marioBody.AddForce(Vector2.up * deathImpulse, ForceMode2D.Impulse);
     }
@@ -170,7 +184,7 @@ public class PlayerMovement : MonoBehaviour
         // stop time
         Time.timeScale = 0.0f;
         // set gameover scene
-        gameManager.GameOver();
-    }*/
+        MarioDies.Raise(this, true);
+    }
 
 }
