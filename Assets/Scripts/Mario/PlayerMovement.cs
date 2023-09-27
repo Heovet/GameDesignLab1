@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private BoxCollider2D coll;
     public float speed = 10;
     public float maxSpeed = 20;
     public float upSpeed = 10;
@@ -33,6 +34,9 @@ public class PlayerMovement : MonoBehaviour
     [System.NonSerialized]
     public bool alive = true;
 
+    [SerializeField] private LayerMask headBangers;
+
+
     void PlayJumpSound()
     {
         // play jump sound
@@ -46,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         Application.targetFrameRate = 30;
         marioBody = GetComponent<Rigidbody2D>();
         marioSprite = GetComponent<SpriteRenderer>();
+        coll = GetComponent<BoxCollider2D>();
 
         marioAnimator.SetBool("onGround", onGroundState);
 
@@ -75,12 +80,25 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        if (col.gameObject.CompareTag("Ground")) onGroundState = true;
-/*        Debug.Log("Touch Ground");*/
-
-        if (col.gameObject.CompareTag("Ground"))
+        int collisionLayerMask = (1 << 3) | (1 << 7) | (1 << 8);
+        if (hitHead())
         {
-/*            Debug.Log("Sending animator: Mario on ground");*/
+            if (col.gameObject.CompareTag("QuestionBox"))
+            {
+                Debug.Log(col.gameObject.name);
+                col.gameObject.GetComponent<QuestionBoxScript>().QuestionBoxBounce();
+            }
+            else if (col.gameObject.CompareTag("Brick"))
+            {
+                Debug.Log(col.gameObject.name);
+                col.gameObject.GetComponent<BrickScript>().BrickBounce();
+            }
+        }
+        else if (((collisionLayerMask & (1 << col.transform.gameObject.layer)) > 0) & !onGroundState)
+        {
+            /*        Debug.Log("Touch Ground");*/
+            onGroundState = true;
+            /*            Debug.Log("Sending animator: Mario on ground");*/
             // update animator state
             marioAnimator.SetBool("onGround", onGroundState);
         }
@@ -187,4 +205,8 @@ public class PlayerMovement : MonoBehaviour
         MarioDies.Raise(this, true);
     }
 
+    private bool hitHead()
+    {
+        return Physics2D.BoxCast(coll.bounds.center, coll.bounds.size, 0f, Vector2.up, .1f, headBangers);
+    }
 }
