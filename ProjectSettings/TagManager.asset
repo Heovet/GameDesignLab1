@@ -8,6 +8,9 @@ TagManager:
   - Enemy
   - QuestionBox
   - Brick
+  - Orange Portal
+  - Blue Portal
+  - PortalGunPickup
   layers:
   - Default
   - TransparentFX
@@ -15,9 +18,9 @@ TagManager:
   - Ground
   - Water
   - UI
-  - Background
-  - Obstacles
   - Enemies
+  - Obstacles
+  - 
   - 
   - 
   - 
@@ -47,4 +50,7 @@ TagManager:
     locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: PortalGun
+    uniqueID: 3894072963
     locked: 0

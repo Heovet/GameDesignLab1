@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2089479326751173027}
   - component: {fileID: 7101092199002123084}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: PipeTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6733978766046616140}
   - component: {fileID: 4872221534072395015}
-  m_Layer: 7
+  m_Layer: 3
   m_Name: PipeSmall
   m_TagString: Untagged
   m_Icon: {fileID: 0}

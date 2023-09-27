@@ -41,7 +41,7 @@ public class BrickScript : MonoBehaviour
 
     void spawnCoin()
     {
-        Debug.Log("Spawning Coin");
+/*        Debug.Log("Spawning Coin");*/
         GameObject coin = Instantiate(spinningCoin, gameObject.transform);
         coin.transform.position = gameObject.transform.position;
         StartCoroutine(coinBounce(coin));
@@ -55,7 +55,7 @@ public class BrickScript : MonoBehaviour
             transform.localPosition = new Vector2(transform.localPosition.x, transform.localPosition.y + bounceSpeed * Time.deltaTime);
             if (transform.localPosition.y >= originalPosition.y + bounceHeight)
             {
-                Debug.Log("MaxHeight");
+/*                Debug.Log("MaxHeight");*/
                 break;
             }
             yield return null;
@@ -65,7 +65,7 @@ public class BrickScript : MonoBehaviour
             transform.localPosition = new Vector2(transform.localPosition.x, transform.localPosition.y - bounceSpeed * Time.deltaTime);
             if (transform.localPosition.y <= originalPosition.y + bounceHeight)
             {
-                Debug.Log("OrgHeight");
+/*                Debug.Log("OrgHeight");*/
                 transform.localPosition = originalPosition;
                 break;
             }
@@ -82,7 +82,7 @@ public class BrickScript : MonoBehaviour
             coin.transform.localPosition = new Vector2(coin.transform.localPosition.x, coin.transform.localPosition.y + coinSpeed * Time.deltaTime);
             if (coin.transform.localPosition.y >= originalPosition.y + coinHeight + 1)
             {
-                Debug.Log("MaxCoinHeight");
+/*                Debug.Log("MaxCoinHeight");*/
                 break;
             }
             yield return null;
@@ -92,7 +92,7 @@ public class BrickScript : MonoBehaviour
             coin.transform.localPosition = new Vector2(coin.transform.localPosition.x, coin.transform.localPosition.y - coinSpeed * Time.deltaTime);
             if (coin.transform.localPosition.y <= originalPosition.y)
             {
-                Debug.Log("CoinFallDistance");
+/*                Debug.Log("CoinFallDistance");*/
                 boxAudio.PlayOneShot(boxAudio.clip);
                 Destroy(coin.gameObject);
                 break;

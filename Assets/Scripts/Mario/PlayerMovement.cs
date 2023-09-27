@@ -5,7 +5,11 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private BoxCollider2D coll;
+    [Header("For Portal Stuff")]
+    public GameEvents portalGunPickup;
+    public AudioSource memeSound;
+
+    [Header("Other Nonsense")]
     public float speed = 10;
     public float maxSpeed = 20;
     public float upSpeed = 10;
@@ -17,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public GameObject enemies;
     public JumpOverGoomba jumpOverGoomba;
     public Transform gameCamera;
+    private BoxCollider2D coll;
 
     public GameEvents GoombaDies;
     public GameEvents MarioDies;
@@ -35,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     public bool alive = true;
 
     [SerializeField] private LayerMask headBangers;
+
 
 
     void PlayJumpSound()
@@ -80,7 +86,7 @@ public class PlayerMovement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        int collisionLayerMask = (1 << 3) | (1 << 7) | (1 << 8);
+        int collisionLayerMask = (1 << 3) | (1 << 6) | (1 << 7);
         if (hitHead())
         {
             if (col.gameObject.CompareTag("QuestionBox"))
@@ -121,6 +127,12 @@ public class PlayerMovement : MonoBehaviour
             GoombaDies.Raise(this, true);
         }*/
 
+        if (other.gameObject.CompareTag("PortalGunPickup"))
+        {
+            Debug.Log("Portal!");
+            portalGunPickup.Raise(this, true);
+            memeSound.Play();
+        }
     }
 
     // FixedUpdate is called 50 times a second
